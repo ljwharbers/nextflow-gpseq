@@ -1,0 +1,4 @@
+work/
+.nextflow/
+results/
+gpseq_containers/

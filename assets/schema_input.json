@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://raw.githubusercontent.com/nf-core/gpseq/master/assets/schema_input.json",
+  "title": "nf-core/gpseq pipeline - params.input schema",
+  "description": "Schema for the file provided with params.input",
+  "type": "array",
+  "items": {
+      "type": "object",
+      "properties": {
+          "sample": {
+              "type": "string",
+              "pattern": "^\\S+$",
+              "errorMessage": "Sample name must be provided and cannot contain spaces"
+          },
+          "fastq": {
+              "type": "string",
+              "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+              "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+          },
+          "barcode": {
+              "type": "string",
+              "pattern": "^[ACGT]+$",
+              "errorMessage": "Barcode must be provided and must only contain A, C, G or T"
+          },
+          "condition": {
+              "type": "string",
+              "pattern": "^\\w+$",
+              "errorMessage": "Condition must be provided"
+          }
+      },
+      "required": ["sample", "fastq", "barcode", "condition"]
+  }
+}

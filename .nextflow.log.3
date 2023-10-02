@@ -1,0 +1,146 @@
+Sep-29 15:58:51.346 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf -resume
+Sep-29 15:58:51.441 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 23.04.3
+Sep-29 15:58:51.466 [main] DEBUG nextflow.plugin.PluginsFacade - Setting up plugin manager > mode=prod; embedded=false; plugins-dir=/home/luukharbers/.nextflow/plugins; core-plugins: nf-amazon@1.16.2,nf-azure@1.0.1,nf-codecommit@0.1.4,nf-console@1.0.5,nf-ga4gh@1.0.5,nf-google@1.7.3,nf-tower@1.5.12,nf-wave@0.8.4
+Sep-29 15:58:51.479 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Enabled plugins: []
+Sep-29 15:58:51.480 [main] INFO  org.pf4j.DefaultPluginStatusProvider - Disabled plugins: []
+Sep-29 15:58:51.484 [main] INFO  org.pf4j.DefaultPluginManager - PF4J version 3.4.1 in 'deployment' mode
+Sep-29 15:58:51.498 [main] INFO  org.pf4j.AbstractPluginManager - No plugins
+Sep-29 15:58:51.518 [main] DEBUG nextflow.config.ConfigBuilder - Found config local: /mnt/AchTeraD/Documents/Projects/GPSeq_natprot/nextflow_pipeline/nextflow.config
+Sep-29 15:58:51.519 [main] DEBUG nextflow.config.ConfigBuilder - Parsing config file: /mnt/AchTeraD/Documents/Projects/GPSeq_natprot/nextflow_pipeline/nextflow.config
+Sep-29 15:58:51.546 [main] DEBUG nextflow.config.ConfigBuilder - Applying config profile: `standard`
+Sep-29 15:58:52.307 [main] DEBUG nextflow.cli.CmdRun - Applied DSL=2 from config declaration
+Sep-29 15:58:52.332 [main] INFO  nextflow.cli.CmdRun - Launching `main.nf` [jolly_kalam] DSL2 - revision: 67109d1576
+Sep-29 15:58:52.333 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins default=[]
+Sep-29 15:58:52.333 [main] DEBUG nextflow.plugin.PluginsFacade - Plugins resolved requirement=[]
+Sep-29 15:58:52.346 [main] DEBUG nextflow.secret.LocalSecretsProvider - Secrets store: /home/luukharbers/.nextflow/secrets/store.json
+Sep-29 15:58:52.350 [main] DEBUG nextflow.secret.SecretsLoader - Discovered secrets providers: [nextflow.secret.LocalSecretsProvider@7b81616b] - activable => nextflow.secret.LocalSecretsProvider@7b81616b
+Sep-29 15:58:52.422 [main] DEBUG nextflow.Session - Session UUID: 38481d67-a8ac-4b4d-8b65-b7ee7cf69f1a
+Sep-29 15:58:52.422 [main] DEBUG nextflow.Session - Run name: jolly_kalam
+Sep-29 15:58:52.423 [main] DEBUG nextflow.Session - Executor pool size: 40
+Sep-29 15:58:52.436 [main] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'FileTransfer' minSize=10; maxSize=120; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Sep-29 15:58:52.457 [main] DEBUG nextflow.cli.CmdRun - 
+  Version: 23.04.3 build 5875
+  Created: 11-08-2023 18:37 UTC (20:37 CEST)
+  System: Linux 5.15.0-84-generic
+  Runtime: Groovy 3.0.16 on OpenJDK 64-Bit Server VM 11.0.1+13-LTS
+  Encoding: UTF-8 (UTF-8)
+  Process: 1685839@LHPC [127.0.1.1]
+  CPUs: 40 - Mem: 125.5 GB (56.1 GB) - Swap: 62.5 GB (62.4 GB)
+Sep-29 15:58:52.493 [main] DEBUG nextflow.Session - Work-dir: /mnt/AchTeraD/Documents/Projects/GPSeq_natprot/nextflow_pipeline/work [ext2/ext3]
+Sep-29 15:58:52.512 [main] DEBUG nextflow.executor.ExecutorFactory - Extension executors providers=[]
+Sep-29 15:58:52.524 [main] DEBUG nextflow.Session - Observer factory: DefaultObserverFactory
+Sep-29 15:58:52.553 [main] DEBUG nextflow.cache.CacheFactory - Using Nextflow cache factory: nextflow.cache.DefaultCacheFactory
+Sep-29 15:58:52.566 [main] DEBUG nextflow.util.CustomThreadPool - Creating default thread pool > poolSize: 41; maxThreads: 1000
+Sep-29 15:58:52.751 [main] DEBUG nextflow.Session - Session start
+Sep-29 15:58:54.005 [main] DEBUG nextflow.script.ScriptRunner - > Launching execution
+Sep-29 15:58:54.024 [main] DEBUG nextflow.plugin.PluginUpdater - Installing plugin nf-validation version: latest
+Sep-29 15:58:54.415 [main] INFO  org.pf4j.AbstractPluginManager - Plugin 'nf-validation@0.3.2' resolved
+Sep-29 15:58:54.415 [main] INFO  org.pf4j.AbstractPluginManager - Start plugin 'nf-validation@0.3.2'
+Sep-29 15:58:54.423 [main] DEBUG nextflow.plugin.BasePlugin - Plugin started nf-validation@0.3.2
+Sep-29 15:58:54.424 [main] DEBUG nextflow.script.IncludeDef - Loading included plugin extensions with names: [fromSamplesheet:fromSamplesheet]; plugin Id: nf-validation
+Sep-29 15:58:54.453 [main] INFO  nextflow.Nextflow - 
+G P S E Q   P I P E L I N E
+===================================
+Samplesheet		: samplesheet.csv
+Outdir			: results
+Reference		: mm10.fa
+Enzyme			: DpnII
+Cutsite			: GATC
+Pattern			: umi8bc8cs4
+
+Sep-29 15:58:54.501 [main] DEBUG nextflow.validation.SchemaValidator - Starting validation: 'samplesheet.csv' with 'assets/schema_input.json'
+Sep-29 15:58:54.602 [main] DEBUG nextflow.validation.SchemaValidator - Validation passed: 'samplesheet.csv' with 'assets/schema_input.json'
+Sep-29 15:58:54.798 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.799 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.806 [main] DEBUG nextflow.executor.Executor - [warm up] executor > local
+Sep-29 15:58:54.812 [main] DEBUG n.processor.LocalPollingMonitor - Creating local task monitor for executor 'local' > cpus=40; memory=125.5 GB; capacity=40; pollInterval=100ms; dumpInterval=5m
+Sep-29 15:58:54.898 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.898 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.923 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.923 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.949 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.949 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.959 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.959 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.967 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.968 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.979 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.980 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.991 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.991 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:54.997 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:54.997 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:55.004 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:55.004 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:55.017 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:55.017 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:55.048 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:55.048 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:55.098 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:55.099 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:55.106 [main] DEBUG nextflow.executor.ExecutorFactory - << taskConfig executor: null
+Sep-29 15:58:55.106 [main] DEBUG nextflow.executor.ExecutorFactory - >> processorType: 'local'
+Sep-29 15:58:55.110 [main] DEBUG nextflow.Session - Workflow process names [dsl2]: CORRECT_POS, FASTQC, GET_CUTSITES, FILTER, COUNT_FILTERS, DEDUPLICATE, MULTIQC, FILTER_BAM, ASSIGN_UMIS, ALIGN, GENERATE_BED, GROUP_UMIS, GENERATE_PLOTS, EXTRACT
+Sep-29 15:58:55.111 [main] DEBUG nextflow.Session - Igniting dataflow network (15)
+Sep-29 15:58:55.112 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > FASTQC
+Sep-29 15:58:55.113 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > GET_CUTSITES
+Sep-29 15:58:55.114 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > EXTRACT
+Sep-29 15:58:55.115 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > FILTER
+Sep-29 15:58:55.116 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > ALIGN
+Sep-29 15:58:55.117 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > FILTER_BAM
+Sep-29 15:58:55.117 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > CORRECT_POS
+Sep-29 15:58:55.118 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > GROUP_UMIS
+Sep-29 15:58:55.121 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > ASSIGN_UMIS
+Sep-29 15:58:55.129 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > DEDUPLICATE
+Sep-29 15:58:55.131 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > GENERATE_BED
+Sep-29 15:58:55.133 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > MULTIQC
+Sep-29 15:58:55.135 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > COUNT_FILTERS
+Sep-29 15:58:55.137 [main] DEBUG nextflow.processor.TaskProcessor - Starting process > GENERATE_PLOTS
+Sep-29 15:58:55.141 [main] DEBUG nextflow.script.ScriptRunner - > Awaiting termination 
+Sep-29 15:58:55.141 [main] DEBUG nextflow.Session - Session await
+Sep-29 15:58:55.381 [Actor Thread 33] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=library://ljwharbers/gpseq/fastx-barber:0.0.2; path=/mnt/AchTeraD/singularity_cache/ljwharbers-gpseq-fastx-barber-0.0.2.img
+Sep-29 15:58:55.381 [Actor Thread 34] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=https://depot.galaxyproject.org/singularity/fastqc:0.11.9--0; path=/mnt/AchTeraD/singularity_cache/depot.galaxyproject.org-singularity-fastqc-0.11.9--0.img
+Sep-29 15:58:55.580 [Actor Thread 29] INFO  nextflow.processor.TaskProcessor - [aa/883461] Cached process > EXTRACT (fbarber extract on KG77)
+Sep-29 15:58:55.580 [Actor Thread 28] INFO  nextflow.processor.TaskProcessor - [bb/2f9be5] Cached process > FASTQC (FASTQC on KG77)
+Sep-29 15:58:55.580 [Actor Thread 40] INFO  nextflow.processor.TaskProcessor - [c2/144e89] Cached process > EXTRACT (fbarber extract on KG71)
+Sep-29 15:58:55.580 [Actor Thread 41] INFO  nextflow.processor.TaskProcessor - [45/4d62da] Cached process > FASTQC (FASTQC on KG71)
+Sep-29 15:58:55.580 [Actor Thread 35] INFO  nextflow.processor.TaskProcessor - [80/a96bac] Cached process > GET_CUTSITES (Getting cutsite locations for DpnII in mm10.fa)
+Sep-29 15:58:55.615 [Actor Thread 21] INFO  nextflow.processor.TaskProcessor - [d5/114941] Cached process > FILTER (fbarber filter on KG77)
+Sep-29 15:58:55.622 [Actor Thread 24] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=https://depot.galaxyproject.org/singularity/mulled-v2-ac74a7f02cebcfcc07d8e8d1d750af9c83b4d45a:a0ffedb52808e102887f6ce600d092675bf3528a-0; path=/mnt/AchTeraD/singularity_cache/depot.galaxyproject.org-singularity-mulled-v2-ac74a7f02cebcfcc07d8e8d1d750af9c83b4d45a-a0ffedb52808e102887f6ce600d092675bf3528a-0.img
+Sep-29 15:58:55.624 [Actor Thread 37] INFO  nextflow.processor.TaskProcessor - [24/97d2e4] Cached process > FILTER (fbarber filter on KG71)
+Sep-29 15:58:55.630 [Actor Thread 21] INFO  nextflow.processor.TaskProcessor - [b7/f34fa8] Cached process > ALIGN (bowtie2 on KG77)
+Sep-29 15:58:55.640 [Actor Thread 32] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=https://depot.galaxyproject.org/singularity/sambamba:1.0--h98b6b92_0; path=/mnt/AchTeraD/singularity_cache/depot.galaxyproject.org-singularity-sambamba-1.0--h98b6b92_0.img
+Sep-29 15:58:55.649 [Actor Thread 39] INFO  nextflow.processor.TaskProcessor - [06/486521] Cached process > ALIGN (bowtie2 on KG71)
+Sep-29 15:58:55.649 [Actor Thread 26] INFO  nextflow.processor.TaskProcessor - [15/fcfedb] Cached process > FILTER_BAM (filtering bam of KG77)
+Sep-29 15:58:55.665 [Actor Thread 32] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=https://depot.galaxyproject.org/singularity/mulled-v2-2948bee3b01472a1213e7d859fb1d41fe1db9fe4:3bb7859076ae5170dead8b24531eed649f8649e8-0; path=/mnt/AchTeraD/singularity_cache/depot.galaxyproject.org-singularity-mulled-v2-2948bee3b01472a1213e7d859fb1d41fe1db9fe4-3bb7859076ae5170dead8b24531eed649f8649e8-0.img
+Sep-29 15:58:55.667 [Actor Thread 32] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=https://depot.galaxyproject.org/singularity/multiqc:1.15--pyhdfd78af_0; path=/mnt/AchTeraD/singularity_cache/depot.galaxyproject.org-singularity-multiqc-1.15--pyhdfd78af_0.img
+Sep-29 15:58:55.667 [Actor Thread 24] INFO  nextflow.processor.TaskProcessor - [44/0f9cc4] Cached process > FILTER_BAM (filtering bam of KG71)
+Sep-29 15:58:55.673 [Actor Thread 25] INFO  nextflow.processor.TaskProcessor - [72/cc4464] Cached process > MULTIQC (MultiQC on all samples)
+Sep-29 15:58:55.674 [Actor Thread 39] INFO  nextflow.processor.TaskProcessor - [16/b90447] Cached process > CORRECT_POS (Correcting forward and reverse base positions of KG77)
+Sep-29 15:58:55.678 [Actor Thread 24] INFO  nextflow.processor.TaskProcessor - [23/7eee5c] Cached process > CORRECT_POS (Correcting forward and reverse base positions of KG71)
+Sep-29 15:58:55.686 [Actor Thread 32] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=library://ljwharbers/gpseq/gpseq_pyenv:0.0.1; path=/mnt/AchTeraD/singularity_cache/ljwharbers-gpseq-gpseq_pyenv-0.0.1.img
+Sep-29 15:58:55.696 [Actor Thread 25] DEBUG nextflow.util.ThreadPoolBuilder - Creating thread pool 'PublishDir' minSize=10; maxSize=120; workQueue=LinkedBlockingQueue[10000]; allowCoreThreadTimeout=false
+Sep-29 15:58:55.721 [Actor Thread 37] INFO  nextflow.processor.TaskProcessor - [06/1d15b1] Cached process > GROUP_UMIS (Grouping UMIs of KG77)
+Sep-29 15:58:55.734 [Actor Thread 39] INFO  nextflow.processor.TaskProcessor - [6c/5a2592] Cached process > GROUP_UMIS (Grouping UMIs of KG71)
+Sep-29 15:58:55.740 [Actor Thread 25] INFO  nextflow.processor.TaskProcessor - [7f/ee43b7] Cached process > ASSIGN_UMIS (Assigning UMIs to cutsite of KG77)
+Sep-29 15:58:55.746 [Actor Thread 32] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=library://ljwharbers/gpseq/gpseq_renv:0.0.3; path=/mnt/AchTeraD/singularity_cache/ljwharbers-gpseq-gpseq_renv-0.0.3.img
+Sep-29 15:58:55.750 [Actor Thread 26] INFO  nextflow.processor.TaskProcessor - [22/7bb3a1] Cached process > ASSIGN_UMIS (Assigning UMIs to cutsite of KG71)
+Sep-29 15:58:55.751 [Actor Thread 39] INFO  nextflow.processor.TaskProcessor - [48/5eb346] Cached process > DEDUPLICATE (Deduplicating UMIs of KG77)
+Sep-29 15:58:55.760 [Actor Thread 39] INFO  nextflow.processor.TaskProcessor - [37/7ba772] Cached process > DEDUPLICATE (Deduplicating UMIs of KG71)
+Sep-29 15:58:55.762 [Actor Thread 26] DEBUG nextflow.container.SingularityCache - Singularity found local store for image=https://depot.galaxyproject.org/singularity/samtools:1.8--4; path=/mnt/AchTeraD/singularity_cache/depot.galaxyproject.org-singularity-samtools-1.8--4.img
+Sep-29 15:58:55.764 [Actor Thread 36] INFO  nextflow.processor.TaskProcessor - [53/016729] Cached process > GENERATE_BED (Generating final bed file of KG77)
+Sep-29 15:58:55.770 [Actor Thread 25] INFO  nextflow.processor.TaskProcessor - [7a/8f47ba] Cached process > GENERATE_BED (Generating final bed file of KG71)
+Sep-29 15:58:55.770 [Actor Thread 21] INFO  nextflow.processor.TaskProcessor - [d0/9da6c5] Cached process > COUNT_FILTERS (Counting the number of reads/umis after each filtering step of KG77)
+Sep-29 15:58:55.779 [Actor Thread 27] INFO  nextflow.processor.TaskProcessor - [fb/a99dff] Cached process > COUNT_FILTERS (Counting the number of reads/umis after each filtering step of KG71)
+Sep-29 15:58:55.866 [Task submitter] DEBUG n.executor.local.LocalTaskHandler - Launch cmd line: /bin/bash -ue .command.run
+Sep-29 15:58:55.869 [Task submitter] INFO  nextflow.Session - [dc/df651f] Submitted process > GENERATE_PLOTS (Generating summary plots of all samples)
+Sep-29 15:59:02.606 [Task monitor] DEBUG n.processor.TaskPollingMonitor - Task completed > TaskHandler[id: 25; name: GENERATE_PLOTS (Generating summary plots of all samples); status: COMPLETED; exit: 0; error: -; workDir: /mnt/AchTeraD/Documents/Projects/GPSeq_natprot/nextflow_pipeline/work/dc/df651fa2f5b7ef47b42db9210ee047]
+Sep-29 15:59:02.613 [main] DEBUG nextflow.Session - Session await > all processes finished
+Sep-29 15:59:02.618 [main] DEBUG nextflow.Session - Session await > all barriers passed
+Sep-29 15:59:02.627 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'PublishDir' shutdown completed (hard=false)
+Sep-29 15:59:02.646 [main] DEBUG nextflow.trace.WorkflowStatsObserver - Workflow completed > WorkflowStats[succeededCount=1; failedCount=0; ignoredCount=0; cachedCount=24; pendingCount=0; submittedCount=0; runningCount=0; retriesCount=0; abortedCount=0; succeedDuration=6.7s; failedDuration=0ms; cachedDuration=1h 15m 34s;loadCpus=0; loadMemory=0; peakRunning=1; peakCpus=1; peakMemory=0; ]
+Sep-29 15:59:02.723 [main] DEBUG nextflow.cache.CacheDB - Closing CacheDB done
+Sep-29 15:59:02.723 [main] INFO  org.pf4j.AbstractPluginManager - Stop plugin 'nf-validation@0.3.2'
+Sep-29 15:59:02.723 [main] DEBUG nextflow.plugin.BasePlugin - Plugin stopped nf-validation
+Sep-29 15:59:02.735 [main] DEBUG nextflow.util.ThreadPoolManager - Thread pool 'FileTransfer' shutdown completed (hard=false)
+Sep-29 15:59:02.735 [main] DEBUG nextflow.script.ScriptRunner - > Execution complete -- Goodbye
