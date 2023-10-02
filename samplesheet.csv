@@ -1,3 +1,3 @@
 sample,fastq,barcode,condition
-sample_1,./data/sample1_R1.fastq.gz,CATCACGC,7min
-sample_2,./data/sample1_R1.fastq.gz,CATCACGC,10min
+sample_1,/mnt/AchTeraD/Documents/Projects/GPSeq_natprot/nextflow_pipeline/data/sample1_R1.fastq.gz,CATCACGC,7min
+sample_2,/mnt/AchTeraD/Documents/Projects/GPSeq_natprot/nextflow_pipeline/data/sample1_R1.fastq.gz,CATCACGC,10min
