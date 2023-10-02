@@ -23,7 +23,9 @@ log.info """\
 
 // Get file with all cutsite locations for given reference genome and enzyme combination
 process GET_CUTSITES {
+	label "process_single"
 	tag "Getting cutsite locations for ${enzyme} in ${reference.Name}"
+	
 	
 	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
 	
@@ -44,10 +46,10 @@ process GET_CUTSITES {
 
 // Extract the barcode, cutsite and UMI information from reads
 process EXTRACT {
+	label "process_low"
 	tag "fbarber extract on ${sample}"
 
 	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
-	cpus 15
 	
 	input:
 		tuple val(sample), path(reads)
@@ -72,6 +74,7 @@ process EXTRACT {
 
 // Filter reads checking for correct barcode and cutsite
 process FILTER {
+	label "process_low"
 	tag "fbarber filter on ${sample}"
 
 	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
@@ -98,10 +101,10 @@ process FILTER {
 
 // Align filtered fastq files to reference genome using bowtie2
 process ALIGN {
+	label "process_high"
 	tag "bowtie2 on ${sample}"
 	
 	container "https://depot.galaxyproject.org/singularity/mulled-v2-ac74a7f02cebcfcc07d8e8d1d750af9c83b4d45a:a0ffedb52808e102887f6ce600d092675bf3528a-0"
-	cpus 15
 	
 	input:
 		tuple val(sample), path(filtered)
@@ -126,6 +129,7 @@ process ALIGN {
 
 // Filter bamfile on quality score, chromosomes etc
 process FILTER_BAM {
+	label "process_medium"
 	tag "filtering bam of ${sample}"
 	
 	container "https://depot.galaxyproject.org/singularity/sambamba:1.0--h98b6b92_0"
@@ -145,6 +149,7 @@ process FILTER_BAM {
 
 // Correct forward and reverse positions
 process CORRECT_POS {
+	label "process_medium"
 	tag "Correcting forward and reverse base positions of ${sample}"
 	
 	container "https://depot.galaxyproject.org/singularity/mulled-v2-2948bee3b01472a1213e7d859fb1d41fe1db9fe4:3bb7859076ae5170dead8b24531eed649f8649e8-0" 
@@ -169,6 +174,7 @@ process CORRECT_POS {
 
 // Group UMIs
 process GROUP_UMIS {
+	label "process_single"
 	tag "Grouping UMIs of ${sample}"
 	
 	container "library://ljwharbers/gpseq/gpseq_pyenv:0.0.1"
@@ -188,10 +194,10 @@ process GROUP_UMIS {
 
 // Assign UMIs to cutsite
 process ASSIGN_UMIS {
+	label "process_low"
 	tag "Assigning UMIs to cutsite of ${sample}"
 	
 	container "library://ljwharbers/gpseq/gpseq_pyenv:0.0.1"
-	cpus 15
 	
 	input:
 		tuple val(sample), path(umi_clean)
@@ -209,10 +215,10 @@ process ASSIGN_UMIS {
 
 // Deduplicate UMIs
 process DEDUPLICATE {
+	label "process_medium"
 	tag "Deduplicating UMIs of ${sample}"
 	
 	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
-	cpus 15
 	
 	input:
 		tuple val(sample), path(umi_atcs)
@@ -228,6 +234,7 @@ process DEDUPLICATE {
 
 // Generate final bed file
 process GENERATE_BED {
+	label "process_low"
 	tag "Generating final bed file of ${sample}"
 	
 	// Publish
@@ -249,6 +256,7 @@ process GENERATE_BED {
 
 // Count Fastqs reads
 process COUNT_FILTERS {
+	label "process_low"
 	tag "Counting the number of reads/umis after each filtering step of ${sample}"
 	
 	container "https://depot.galaxyproject.org/singularity/samtools:1.8--4"
@@ -303,6 +311,7 @@ process COUNT_FILTERS {
 
 // Generate summary table
 process GENERATE_PLOTS {
+	label "process_low"
 	tag "Generating summary plots of all samples"
 	
 	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"	
@@ -323,6 +332,7 @@ process GENERATE_PLOTS {
 
 // Run Fastqc on initial fastq files
 process  FASTQC {
+	label "process_medium"
 	tag "FASTQC on ${sample}"
 
 	container "https://depot.galaxyproject.org/singularity/fastqc:0.11.9--0"
@@ -342,7 +352,9 @@ process  FASTQC {
 
 // Get report from MultiQC
 process MULTIQC {
+	label "process_medium"
 	tag "MultiQC on all samples"
+	
 	container "https://depot.galaxyproject.org/singularity/multiqc:1.15--pyhdfd78af_0"
 	
 	publishDir params.outdir, mode:'copy'
