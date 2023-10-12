@@ -26,3 +26,5 @@ If you do not specify a fasta file and bowtie2 index, you can specify the refere
 `nextflow run main.nf --samplesheet path/to/samplesheet.csv --outdir path/to/results --genome GRCh38`
 
 Downloading the fasta file and index might be slow so you can also download the files that you would need through using this tool: https://ewels.github.io/AWS-iGenomes/ Note: you need `aws` tool for this. Once you've downloaded the reference and index files you need you can change the `igenomes_base` parameter in `nextflow.config` and it will take the fasta/index files from there instead of downloading it through nextflow.
+
+Finally, if you want to resume canceled or failed runs, you can add the tag `-resume`. Usually, I always use this tag irregardless of if I run something for the first time or if I am resuming a run.
