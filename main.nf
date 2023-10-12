@@ -1,10 +1,9 @@
 // Include samplesheet plugin
 include { fromSamplesheet } from 'plugin/nf-validation'
 
-
-/*TODO
-1. add processing labels for high/low/medium cpu usage
-*/ 
+// Get genome attributes
+params.fasta = WorkflowMain.getGenomeAttribute(params, 'fasta')
+params.bwt2_index = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
 
 // Print pipeline info
 log.info """\
@@ -13,7 +12,7 @@ log.info """\
 		===================================
 		Samplesheet		: ${params.samplesheet}
 		Outdir			: ${params.outdir}
-		Reference		: ${params.reference.replaceAll(".+\\/", "")}
+		Reference		: ${params.genome ? params.genome : params.fasta.replaceAll(".+\\/", "")}
 		Enzyme			: ${params.enzyme}
 		Cutsite			: ${params.cutsite}
 		Pattern			: ${params.pattern}
@@ -24,23 +23,23 @@ log.info """\
 // Get file with all cutsite locations for given reference genome and enzyme combination
 process GET_CUTSITES {
 	label "process_single"
-	tag "Getting cutsite locations for ${enzyme} in ${reference.Name}"
+	tag "Getting cutsite locations for ${enzyme} in ${fasta.Name}"
 	
 	
 	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
 	
 	input:
-		path reference
+		path fasta
 		val cutsite
 		val enzyme
 		
 	output:
-		path "${reference.baseName}_${enzyme}_${cutsite}_sites.bed.gz"
+		path "${fasta.baseName}_${enzyme}_${cutsite}_sites.bed.gz"
 	
 	script:
 		"""
-		fbarber find_seq ${reference} ${cutsite} --case-insensitive \
-		--global-name --output ${reference.baseName}_${enzyme}_${cutsite}_sites.bed.gz
+		fbarber find_seq ${fasta} ${cutsite} --case-insensitive \
+		--global-name --output ${fasta.baseName}_${enzyme}_${cutsite}_sites.bed.gz
 		"""
 }
 
@@ -78,7 +77,6 @@ process FILTER {
 	tag "fbarber filter on ${sample}"
 
 	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
-	cpus 15
 	
 	input:
 		tuple val(sample), val(barcode), path(hq_extracted)
@@ -108,7 +106,7 @@ process ALIGN {
 	
 	input:
 		tuple val(sample), path(filtered)
-		path reference
+		path fasta
 		path index
 	
 	output:
@@ -308,7 +306,6 @@ process COUNT_FILTERS {
 		"""
 }
 
-
 // Generate summary table
 process GENERATE_PLOTS {
 	label "process_low"
@@ -385,12 +382,12 @@ workflow {
 	
 	// Initial QC and generating cutsites
 	fastqc_ch = FASTQC(samplesheet.input_ch) // FASTQC
-	cutsites_ch = GET_CUTSITES(params.reference, params.cutsite, params.enzyme) // Getting cutsite locations
+	cutsites_ch = GET_CUTSITES(params.fasta, params.cutsite, params.enzyme) // Getting cutsite locations
 	
 	// Main preprocessing pipeline
 	extract_ch = EXTRACT(samplesheet.input_ch, params.pattern) // Extracting barcode, cutsite and UMI
 	filter_ch = FILTER(samplesheet.barcode_ch.join(extract_ch.hq_extracted), params.cutsite) // Filtering reads
-	align_ch = ALIGN(filter_ch.filtered, params.reference, params.index_dir) // Aligning reads
+	align_ch = ALIGN(filter_ch.filtered, params.fasta, params.bwt2_index) // Aligning reads
 	filterbam_ch = FILTER_BAM(align_ch.bam) // Filtering bamfile
 	correctpos_ch = CORRECT_POS(filterbam_ch.filt_bam) // Correcting forward and reverse positions
 	clean_ch = GROUP_UMIS(correctpos_ch.corrected_bed) // Grouping UMIs
@@ -422,6 +419,6 @@ workflow {
 	// Calculating GPseq score
 	
 
-	
+	// Plotting GPSeq score pizza plot and ideograms
 
 }
