@@ -3,7 +3,7 @@ include { fromSamplesheet } from 'plugin/nf-validation'
 
 // Get genome attributes
 params.fasta = WorkflowMain.getGenomeAttribute(params, 'fasta')
-params.bwt2_index = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
+params.bwt2index = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
 
 // Print pipeline info
 log.info """\
@@ -387,7 +387,7 @@ workflow {
 	// Main preprocessing pipeline
 	extract_ch = EXTRACT(samplesheet.input_ch, params.pattern) // Extracting barcode, cutsite and UMI
 	filter_ch = FILTER(samplesheet.barcode_ch.join(extract_ch.hq_extracted), params.cutsite) // Filtering reads
-	align_ch = ALIGN(filter_ch.filtered, params.fasta, params.bwt2_index) // Aligning reads
+	align_ch = ALIGN(filter_ch.filtered, params.fasta, params.bwt2index) // Aligning reads
 	filterbam_ch = FILTER_BAM(align_ch.bam) // Filtering bamfile
 	correctpos_ch = CORRECT_POS(filterbam_ch.filt_bam) // Correcting forward and reverse positions
 	clean_ch = GROUP_UMIS(correctpos_ch.corrected_bed) // Grouping UMIs
