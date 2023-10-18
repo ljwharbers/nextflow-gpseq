@@ -4,7 +4,7 @@
 To be able to run this pipeline you need nextflow (version 23.04 or higher) and singularity (tested on version 3.8.6) installed.
 
 The easiest way to install these tools is with conda package manager.  
-For example using the following lines (assuming you have conda installed):
+For example using the following lines (assuming you have conda installed):  
 `conda create -n nextflow -c conda-forge -c bioconda nextflow singularity=3.8*`
 
 ### Running the pipeline
