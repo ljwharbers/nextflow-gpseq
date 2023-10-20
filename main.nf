@@ -318,10 +318,11 @@ process GENERATE_PLOTS {
 		
 	output:
 		path 'summary_plot.pdf'
+		path 'summary_table.tsv'
 		
 	script:
 		"""
-		summary.R --input ${counts} --output summary_plot.pdf
+		summary.R --input ${counts} --output_plot summary_plot.pdf --output_table summary_table.tsv
 		"""
 }
 

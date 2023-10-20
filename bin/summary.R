@@ -13,7 +13,8 @@ theme_set(theme_cowplot())
 ## Parse arguments
 parser = arg_parser("Generate summary table and plots")
 parser = add_argument(parser, "--input", short = "-i", help = "Path to input file", nargs = Inf)
-parser = add_argument(parser, "--output", short = "-o", help = "Path to output directory", nargs = 1)
+parser = add_argument(parser, "--output_plot", short = "-op", help = "Path to output plot", nargs = 1)
+parser = add_argument(parser, "--output_table", short = "-ot", help = "Path to output table", nargs = 1)
 argv = parse_args(parser)
 
 
@@ -70,4 +71,11 @@ plt = (plt_cnt / plt_perc) + plot_layout(guides = "collect")
 
 
 # Save plots
-ggsave(argv$output, plt, width = 14, height = 12)
+ggsave(argv$output_plot, plt, width = 14, height = 12)
+
+
+# Write output table
+dt_wide = merge(dcast(dt, sample + condition ~ filter, value.var = "count"),
+                dcast(dt, sample + condition ~ filter, value.var = "fraction"),
+                suffixes = c("", "_fraction"))
+write.table(dt_wide, argv$output_table, col.names = TRUE, row.names = FALSE,  quote = FALSE, sep = "\t")
