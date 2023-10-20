@@ -258,9 +258,7 @@ process COUNT_FILTERS {
 	tag "Counting the number of reads/umis after each filtering step of ${sample}"
 	
 	container "https://depot.galaxyproject.org/singularity/samtools:1.8--4"
-	
-	publishDir params.outdir, mode:'copy'
-	
+		
 	input:
 		tuple val(sample),
 					val(condition),
