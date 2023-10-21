@@ -26,7 +26,7 @@ process GET_CUTSITES {
 	tag "Getting cutsite locations for ${enzyme} in ${fasta.Name}"
 	
 	
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
+	container "library://ljwharbers/gpseq/fastx-barber:0.0.3"
 	
 	input:
 		path fasta
@@ -48,7 +48,7 @@ process EXTRACT {
 	label "process_low"
 	tag "fbarber extract on ${sample}"
 
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
+	container "library://ljwharbers/gpseq/fastx-barber:0.0.3"
 	
 	input:
 		tuple val(sample), path(reads)
@@ -76,7 +76,7 @@ process FILTER {
 	label "process_low"
 	tag "fbarber filter on ${sample}"
 
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.2"
+	container "library://ljwharbers/gpseq/fastx-barber:0.0.3"
 	
 	input:
 		tuple val(sample), val(barcode), path(hq_extracted)
@@ -116,8 +116,8 @@ process ALIGN {
 	script:
 		"""
 		INDEX=`find -L ./ -name "*.rev.1.bt2" | sed "s/\\.rev.1.bt2\$//"`
-    [ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/\\.rev.1.bt2l\$//"`
-    [ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
+    	[ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/\\.rev.1.bt2l\$//"`
+    	[ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
 		
 		bowtie2 -x \$INDEX ${filtered} --very-sensitive -L 20 --score-min L,-0.6,-0.2 \
 		--end-to-end --reorder -p ${task.cpus} 2> "${sample}_bowtie2.log" | \
@@ -162,11 +162,11 @@ process CORRECT_POS {
 		"""
 		sambamba view ${bam} -h -f bam -F "reverse_strand" | \
 		convert2bed --input=bam - | \
-		cut -f 1-4 | tr "~" \$'\t' | cut -f 1,3,7,16 | gzip > ${sample}.forward.bed.gz
+		cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,3,7,16 | gzip > ${sample}.forward.bed.gz
 		
 		sambamba view ${bam} -h -f bam -F "not reverse_strand" | \
-    convert2bed --input=bam - | \
-    cut -f 1-4 | tr "~" \$'\t' | cut -f 1,2,7,16 | gzip > "${sample}.reverse.bed.gz"
+    	convert2bed --input=bam - | \
+    	cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,2,7,16 | gzip > "${sample}.reverse.bed.gz"
 		"""
 }
 
@@ -276,10 +276,8 @@ process COUNT_FILTERS {
 					path(umi_forward),
 					path(umi_reverse),
 					path(dedup)
-	
 	output:
 		path("${sample}_filter_counts.txt"), emit: fastq_counts
-		
 	script:
 		"""
 		touch ${sample}_filter_counts.txt
