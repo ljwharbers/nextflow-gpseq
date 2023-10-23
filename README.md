@@ -5,7 +5,7 @@ To be able to run this pipeline you need nextflow (version 23.04 or higher) and 
 
 The easiest way to install these tools is with conda package manager.  
 For example using the following lines (assuming you have conda installed):  
-`conda create -n nextflow -c conda-forge -c bioconda nextflow singularity=3.8*`
+`conda create -n nextflow -c conda-forge -c bioconda nextflow=23.10.0 singularity=3.8*`
 
 If you don't have conda installed yet you can install and initialize it in the following way:  
 ```
