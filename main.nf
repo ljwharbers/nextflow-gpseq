@@ -38,7 +38,7 @@ process GET_CUTSITES {
 	
 	script:
 		"""
-		fbarber find_seq ${fasta} ${cutsite} --case-insensitive \
+		fbarber find_seq ${fasta} ${cutsite} --case-insensitive \\
 		--global-name --output ${fasta.baseName}_${enzyme}_${cutsite}_sites.bed.gz
 		"""
 }
@@ -62,11 +62,11 @@ process EXTRACT {
 	
 	script:
 		"""
-		fbarber flag extract ${reads} hq_${sample}.fastq.gz \
-		--filter-qual-output lq_${sample}.fastq.gz \
-		--unmatched-output noprefix_${sample}.fastq.gz \
-		--log ${sample}.log --pattern ${pattern} --simple-pattern \
-		--flagstats bc cs --filter-qual-flags umi,30,.2 \
+		fbarber flag extract ${reads} hq_${sample}.fastq.gz \\
+		--filter-qual-output lq_${sample}.fastq.gz \\
+		--unmatched-output noprefix_${sample}.fastq.gz \\
+		--log ${sample}.log --pattern ${pattern} --simple-pattern \\
+		--flagstats bc cs --filter-qual-flags umi,30,.2 \\
 		--threads ${task.cpus} --chunk-size 200000
 		"""
 }
@@ -89,10 +89,10 @@ process FILTER {
 	
 	script:
 		"""
-		fbarber flag regex ${hq_extracted} filtered_${sample}.fastq.gz \
-		--unmatched-output unmatched_${sample}.fastq.gz \
-		--log-file ${sample}_filtering.log \
-		--pattern "bc,^(?<bc>"${barcode}"){s<2}\$" "cs,^(?<cs>${cutsite}){s<2}\$" \
+		fbarber flag regex ${hq_extracted} filtered_${sample}.fastq.gz \\
+		--unmatched-output unmatched_${sample}.fastq.gz \\
+		--log-file ${sample}_filtering.log \\
+		--pattern "bc,^(?<bc>"${barcode}"){s<2}\$" "cs,^(?<cs>${cutsite}){s<2}\$" \\
 		--threads ${task.cpus} --chunk-size 200000
 		"""
 }
@@ -116,11 +116,11 @@ process ALIGN {
 	script:
 		"""
 		INDEX=`find -L ./ -name "*.rev.1.bt2" | sed "s/\\.rev.1.bt2\$//"`
-    	[ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/\\.rev.1.bt2l\$//"`
-    	[ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
+    [ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/\\.rev.1.bt2l\$//"`
+    [ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
 		
-		bowtie2 -x \$INDEX ${filtered} --very-sensitive -L 20 --score-min L,-0.6,-0.2 \
-		--end-to-end --reorder -p ${task.cpus} 2> "${sample}_bowtie2.log" | \
+		bowtie2 -x \$INDEX ${filtered} --very-sensitive -L 20 --score-min L,-0.6,-0.2 \\
+		--end-to-end --reorder -p ${task.cpus} 2> "${sample}_bowtie2.log" | \\
 		samtools sort --threads ${task.cpus} -o "${sample}.bam"
 		"""
 }
@@ -140,7 +140,7 @@ process FILTER_BAM {
 		
 	script:
 		"""						 
-		sambamba view ${bam} -f bam -F "mapping_quality>=30 and not secondary_alignment and \
+		sambamba view ${bam} -f bam -F "mapping_quality>=30 and not secondary_alignment and \\
 		not unmapped and not chimeric and ref_name!='chrM' and ref_name!='MT'" > ${sample}.filt.bam
 		"""
 }
@@ -160,12 +160,12 @@ process CORRECT_POS {
 	
 	script:
 		"""
-		sambamba view ${bam} -h -f bam -F "reverse_strand" | \
-		convert2bed --input=bam - | \
+		sambamba view ${bam} -h -f bam -F "reverse_strand" | \\
+		convert2bed --input=bam - | \\
 		cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,3,7,16 | gzip > ${sample}.forward.bed.gz
 		
-		sambamba view ${bam} -h -f bam -F "not reverse_strand" | \
-    	convert2bed --input=bam - | \
+		sambamba view ${bam} -h -f bam -F "not reverse_strand" | \\
+    	convert2bed --input=bam - | \\
     	cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,2,7,16 | gzip > "${sample}.reverse.bed.gz"
 		"""
 }
@@ -185,7 +185,7 @@ process GROUP_UMIS {
 		
 	script:
 		"""
-		group_umis.py ${forward_bed} ${reverse_bed} "${sample}.clean_umis.txt.gz" \
+		group_umis.py ${forward_bed} ${reverse_bed} "${sample}.clean_umis.txt.gz" \\
 		--compress-level 6 --len ${params.cutsite.length()}
 		"""
 }
@@ -206,7 +206,7 @@ process ASSIGN_UMIS {
 		
 	script:
 		"""
-		umis2cutsite.py ${umi_clean} ${ref_cutsites} "${sample}_umi_atcs.txt.gz" \
+		umis2cutsite.py ${umi_clean} ${ref_cutsites} "${sample}_umi_atcs.txt.gz" \\
 		--compress --threads ${task.cpus}
 		"""
 }
@@ -247,7 +247,7 @@ process GENERATE_BED {
 	script:
 		"""
 		zcat ${umi_dedup} | \
-		awk 'BEGIN{{FS=OFS="\t"}}{{print \$1 FS \$2 FS \$2 FS "pos_"NR FS \$4}}' |\
+		awk 'BEGIN{{FS=OFS="\t"}}{{print \$1 FS \$2 FS \$2 FS "pos_"NR FS \$4}}' |\\
 		gzip > ${sample}.bed.gz
 		"""
 }
