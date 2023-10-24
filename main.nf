@@ -3,6 +3,7 @@ include { fromSamplesheet } from 'plugin/nf-validation'
 
 // Get genome attributes
 params.fasta = WorkflowMain.getGenomeAttribute(params, 'fasta')
+params.fasta_index = WorkflowMain.getGenomeAttribute(params, 'fasta_index')
 params.bwt2index = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
 
 // Print pipeline info
@@ -12,6 +13,7 @@ log.info """\
 		===================================
 		Samplesheet		: ${params.samplesheet}
 		Outdir			: ${params.outdir}
+		Run			: ${params.runid ? params.runid : params.outdir}
 		Reference		: ${params.genome ? params.genome : params.fasta.replaceAll(".+\\/", "")}
 		Enzyme			: ${params.enzyme}
 		Cutsite			: ${params.cutsite}
@@ -26,7 +28,7 @@ process GET_CUTSITES {
 	tag "Getting cutsite locations for ${enzyme} in ${fasta.Name}"
 	
 	
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.3"
+	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
 	
 	input:
 		path fasta
@@ -48,7 +50,7 @@ process EXTRACT {
 	label "process_low"
 	tag "fbarber extract on ${sample}"
 
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.3"
+	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
 	
 	input:
 		tuple val(sample), path(reads)
@@ -76,7 +78,7 @@ process FILTER {
 	label "process_low"
 	tag "fbarber filter on ${sample}"
 
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.3"
+	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
 	
 	input:
 		tuple val(sample), val(barcode), path(hq_extracted)
@@ -160,13 +162,14 @@ process CORRECT_POS {
 	
 	script:
 		"""
+		export TMPDIR=${workDir}
 		sambamba view ${bam} -h -f bam -F "reverse_strand" | \\
 		convert2bed --input=bam - | \\
 		cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,3,7,16 | gzip > ${sample}.forward.bed.gz
 		
 		sambamba view ${bam} -h -f bam -F "not reverse_strand" | \\
-    	convert2bed --input=bam - | \\
-    	cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,2,7,16 | gzip > "${sample}.reverse.bed.gz"
+    convert2bed --input=bam - | \\
+    cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,2,7,16 | gzip > ${sample}.reverse.bed.gz
 		"""
 }
 
@@ -242,7 +245,7 @@ process GENERATE_BED {
 		tuple val(sample), path(umi_dedup)
 	
 	output:
-		tuple val(sample), path("${sample}.bed.gz"), emit: final_bed
+		tuple val(sample), path("${sample}.bed.gz"), emit: bed
 		
 	script:
 		"""
@@ -303,7 +306,7 @@ process COUNT_FILTERS {
 }
 
 // Generate summary table
-process GENERATE_PLOTS {
+process GENERATE_SUMMARY_PLOTS {
 	label "process_low"
 	tag "Generating summary plots of all samples"
 	
@@ -321,6 +324,76 @@ process GENERATE_PLOTS {
 	script:
 		"""
 		summary.R --input ${counts} --output_plot summary_plot.pdf --output_table summary_table.tsv
+		"""
+}
+
+// Generate metadata for GPSeq score calculation
+process GENERATE_GPSEQ_METADATA {
+	label "process_low"
+	tag "Generating metadata for GPSeq score calculation"
+	
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
+	
+	publishDir params.outdir, mode:'copy'
+	
+	input:
+		val(conditions)
+		val(samples)
+		path(beds)
+		val(runid)
+	
+	output:
+		path 'gpseq_metadata.tsv'
+	
+	script:
+		conditions = conditions.collect { "$it" }.join(' ')
+		samples = samples.collect { "$it" }.join(' ')
+		runid = runid.collect { "$it" }.join(' ')
+
+		"""
+		generateMetadata.R --runs ${runid} --conditions ${conditions} --samples ${samples} --filepaths ${beds} --output gpseq_metadata.tsv
+		"""
+}
+
+// Get chromsize from .fai
+process GET_CHROMSIZES {
+	label "process_single"
+	tag "getting chromsize from ${fasta_index.Name}"
+	
+	input:
+		path fasta_index
+		
+	output:
+		path "${fasta_index.baseName}.chromsizes"
+	
+	script:
+		"""
+		cut -f 1,2 ${fasta_index} > ${fasta_index.baseName}.chromsizes
+		"""
+}
+
+// Calculate GPSeq score
+process CALCULATE_GPSEQ_SCORE {
+	label "process_medium"
+	tag "Calculating GPSeq score"
+	
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
+	
+	publishDir params.outdir, mode:'copy'
+	
+	input:
+		path beds
+		path metadata
+		path chromsizes
+		val binsizes
+	
+	output:
+		path 'gpseq_scores/*'
+	
+	script:
+		"""
+		gpseq-radical.R ${metadata} gpseq_scores \\
+		-b ${binsizes} -c ${chromsizes} --threads ${task.cpus}
 		"""
 }
 
@@ -390,7 +463,7 @@ workflow {
 	clean_ch = GROUP_UMIS(correctpos_ch.corrected_bed) // Grouping UMIs
 	atcs_ch = ASSIGN_UMIS(clean_ch.umi_clean, cutsites_ch) // Assigning UMIs to cutsite
 	dedup_ch = DEDUPLICATE(atcs_ch.umi_atcs) // Deduplicating UMIs
-	final_ch = GENERATE_BED(dedup_ch.umi_dedup) // Generating final bed file
+	bed_ch = GENERATE_BED(dedup_ch.umi_dedup) // Generating final bed file
 	MULTIQC(align_ch.log.mix(fastqc_ch).collect()) // MultiQC
 	
 	// Generating plots and summary table
@@ -411,10 +484,31 @@ workflow {
 	counts_ch = COUNT_FILTERS(countfilter_ch) // Counting filters
 
 	// Collect counts and run plotting
-	GENERATE_PLOTS(counts_ch.collect()) // Generating summary plots
+	GENERATE_SUMMARY_PLOTS(counts_ch.collect()) // Generating summary plots
 	
+	// Getting metadata file for GPSeq score calculations
+	run_ch = Channel.of(params.runid ? params.runid : params.outdir)
+	meta_ch = samplesheet.condition_ch
+				.join(bed_ch).
+				combine(run_ch)
+				.multiMap { condition, sample, bed, runid -> 
+						condition: condition
+						sample: sample
+						bed: bed
+						run: runid
+				}
+	score_meta = GENERATE_GPSEQ_METADATA(
+		meta_ch.condition.collect(),
+		meta_ch.sample.collect(),
+		meta_ch.bed.collect(),
+		meta_ch.run.collect()
+	)
+	
+	// Get chromsizes
+	chromsize_ch = GET_CHROMSIZES(params.fasta_index) // Getting chromsize from .fai
+
 	// Calculating GPseq score
-	
+	CALCULATE_GPSEQ_SCORE(meta_ch.bed.collect(), score_meta, chromsize_ch, params.binsizes)
 
 	// Plotting GPSeq score pizza plot and ideograms
 
