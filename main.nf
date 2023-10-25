@@ -13,7 +13,7 @@ log.info """\
 		===================================
 		Samplesheet		: ${params.samplesheet}
 		Outdir			: ${params.outdir}
-		Run			: ${params.runid ? params.runid : params.outdir}
+		Run			: ${params.runid ? params.runid : params.outdir.replaceAll(".+\\/", "")}
 		Reference		: ${params.genome ? params.genome : params.fasta.replaceAll(".+\\/", "")}
 		Enzyme			: ${params.enzyme}
 		Cutsite			: ${params.cutsite}
@@ -392,8 +392,8 @@ process CALCULATE_GPSEQ_SCORE {
 	
 	script:
 		"""
-		gpseq-radical.R ${metadata} gpseq_scores \\
-		-b ${binsizes} -c ${chromsizes} --threads ${task.cpus}
+		gpseq-radical.R ${metadata} gpseq_scores -b ${binsizes} \\
+		-c ${chromsizes} --normalize-by 'chr' --threads ${task.cpus}
 		"""
 }
 

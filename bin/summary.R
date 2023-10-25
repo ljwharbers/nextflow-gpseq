@@ -31,14 +31,16 @@ dt = rbindlist(dts)
 # Add condition information
 dt[, name := paste0(sample, " (", condition, ")")]
 
-# lexical order
-dt = dt[gtools::mixedorder(condition)]
+# Ordering
+dt[, time_suffix := gsub("([0-9])", "", condition)]
+dt[, time_prefix := as.numeric(gsub("([a-zA-Z:])", "", condition))]
+setorder(dt, -time_suffix, time_prefix)
+
 
 dt[, name := factor(name, levels = unique(name))]
 dt[, filter := factor(filter, levels = c("input", 
                                          "hq_extracted",
                                          "prefix_match",
-                                         "hq_reads",
                                          "total_umis",
                                          "dedup_umis"))]
 dt = dt[!is.na(filter)]

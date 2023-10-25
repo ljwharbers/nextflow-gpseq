@@ -447,8 +447,8 @@ rescale_estimated = function(estimated, args) {
 process_experiment = function(bbmeta, bins, args) {
     exid = bbmeta[1, exid]
     logging::loginfo(sprintf("Processing experiment '%s'.", exid))
-    args$exp_output_folder = file.path(args$output_folder, exid)
-    dir.create(args$exp_output_folder)
+    args$exp_output_folder = file.path(args$output_folder)
+    #dir.create(args$exp_output_folder)
 
     assert(2 <= nrow(bbmeta),
         sprintf("Provide at least two bed files. [%s]", exid))
@@ -699,6 +699,26 @@ bed files in the input metadata file.
 }
 
 args = argparser::parse_args(parser)
+#args = list()
+#args$threads = 6
+#args$bin_tags = "1e6:1e6,1e5:1e5,1e4:1e4"
+#args$output_folder = "/mnt/AchTeraD/Documents/Projects/Pipelines/nextflow_gpseq/work/a7/3d91f07bc6a8fd8bcef3e373f1633a/test/"
+#args$cinfo_path = "/mnt/AchTeraD/Documents/Projects/Pipelines/nextflow_gpseq/work/a7/3d91f07bc6a8fd8bcef3e373f1633a/genome.fa.chromsizes"
+#args$bmeta_path = "/mnt/AchTeraD/Documents/Projects/Pipelines/nextflow_gpseq/work/a7/3d91f07bc6a8fd8bcef3e373f1633a/gpseq_metadata.tsv"
+#args$normalize_by = "chr"
+#args$site_domain = "separate"
+#args$bin_bed = NA
+#args$chrom_tag = "24:X,Y"
+#args$reg_genome = NA
+#args$bin_bed = NA
+#args$bed_outlier_tag = "chisq:0.01"
+#args$score_outlier_tag = "iqr:1.5"
+#args$site_domain = "separate"
+#args$site_bed = NA
+#args$mask_bed = NA
+#args$elongate_ter_bin = FALSE
+#args$chromosome_wide = FALSE
+
 assert(args$normalize_by %in% c("chr", "lib"),
     sprintf("Unrecognized 'normalize_by' value: '%s'", args$normalize_by))
 assert(args$site_domain %in% c("separate", "union", "intersection", "universe"),
@@ -772,6 +792,7 @@ if ("universal" == args$site_domain) {
                 rtracklayer::import.bed(args$cinfo_path))
             data.table::setnames(cinfo, "seqnames", "chrom")
             cinfo[, c("width", "strand") := NULL]
+            cinfo[, start := 1]
         }
         assert(!is.null(cinfo), "Failed to build or retrieve chromosome info.")
     }

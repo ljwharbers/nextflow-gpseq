@@ -9,7 +9,7 @@ packages = c("data.table", "argparser")
 invisible(sapply(packages, function(x) suppressMessages(require(x, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE))))
 
 ## Parse arguments
-parser = arg_parser("Process allelic counts")
+parser = arg_parser("Generate metadata table")
 parser = add_argument(parser, "--runs", short = "-r", help = "List of run ids", nargs = Inf)
 parser = add_argument(parser, "--conditions", short = "-c", help = "List of conditions", nargs = Inf)
 parser = add_argument(parser, "--samples", short = "-s", help = "List of samples", nargs = Inf)
