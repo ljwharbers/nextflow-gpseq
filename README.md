@@ -35,7 +35,7 @@ To run the pipeline with your own dataset, there are a few steps to take.
 
 1. Make a samplesheet. You will first need to create a `samplesheet`. An example samplesheet is located inside the repository `/assets/samplesheet.csv` and should be a comma separated file that consists of the following columns: `sample,fastq,barcode,condition` and each row should contain one sample.
 2. Adjust `nextflow.config`.  There are some default parameters used and specified in the configuration file and, depending on your most common usecase, it is advisable to change some of these defaults.
-   * If you will mostly run GPSeq on human, you can write the path to your own local reference file and bowtie2 index in the config file under `fasta` and `bwt2index`. 
+   * If you will mostly run GPSeq on human, you can write the path to your own local reference file and bowtie2 index in the config file under `fasta` and `bwt2index`. However, I recommend using the iGenomes reference files (described further down).
    * Check `max_memory` and `max_cpus`. It is important that these do not go above your system values.
    * Go over other parameters defined within the `params { }` section in the config file and change whatever you feel fit.  
 
