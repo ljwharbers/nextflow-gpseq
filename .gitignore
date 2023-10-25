@@ -1,5 +1,5 @@
 work/
 .nextflow/
-results/
+results*
 gpseq_containers/
 .nextflow*
