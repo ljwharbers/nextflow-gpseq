@@ -31,5 +31,3 @@ dt = data.table(exid = argv$runs,
 
 # Write output
 write.table(dt, argv$output, quote = F, row.names = F, col.names = T, sep = "\t")
-
-

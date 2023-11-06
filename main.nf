@@ -393,7 +393,7 @@ process CALCULATE_GPSEQ_SCORE {
 	script:
 		"""
 		gpseq-radical.R ${metadata} gpseq_scores -b ${binsizes} \\
-		-c ${chromsizes} --normalize-by 'chr' --threads ${task.cpus}
+		-c ${chromsizes} --normalize-by 'chrom' --threads ${task.cpus}
 		"""
 }
 
@@ -489,8 +489,8 @@ workflow {
 	// Getting metadata file for GPSeq score calculations
 	run_ch = Channel.of(params.runid ? params.runid : params.outdir)
 	meta_ch = samplesheet.condition_ch
-				.join(bed_ch).
-				combine(run_ch)
+				.join(bed_ch)
+				.combine(run_ch)
 				.multiMap { condition, sample, bed, runid -> 
 						condition: condition
 						sample: sample
