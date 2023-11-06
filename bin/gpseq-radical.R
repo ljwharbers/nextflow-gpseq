@@ -810,7 +810,7 @@ if ("universal" == args$site_domain) {
                 rtracklayer::import.bed(args$cinfo_path))
             data.table::setnames(cinfo, "seqnames", "chrom")
             cinfo[, c("width", "strand") := NULL]
-            cinfo[, start := 1]
+            cinfo[, start := 1] # Added this because input chromsize format is different when calculating it from genome.fa.fai 
         }
         assert(!is.null(cinfo), "Failed to build or retrieve chromosome info.")
         assert(nrow(cinfo[start == 1]) == nrow(cinfo),
