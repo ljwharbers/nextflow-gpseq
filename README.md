@@ -1,7 +1,7 @@
 ## Nextflow pipeline for processing of GPSeq data
 
 ### Requirements
-To be able to run this pipeline you need nextflow (version 23.04 or higher) and singularity (tested on version 3.8.6) installed. This does not work on Mac.
+To be able to run this pipeline you need nextflow (version 23.10 or higher) and singularity (tested on version 3.8.6) installed. This does not work on Mac.
 
 The easiest way to install these tools is with conda package manager.  
 For example using the following lines (assuming you have conda installed):  

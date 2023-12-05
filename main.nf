@@ -147,6 +147,8 @@ process FILTER_BAM {
 		"""
 }
 
+// SNPsplit if the experiment is from a 
+
 // Correct forward and reverse positions
 process CORRECT_POS {
 	label "process_medium"
@@ -305,7 +307,7 @@ process COUNT_FILTERS {
 		"""
 }
 
-// Generate summary table
+// Generate summary table and plots
 process GENERATE_SUMMARY_PLOTS {
 	label "process_low"
 	tag "Generating summary plots of all samples"
@@ -337,8 +339,8 @@ process GENERATE_GPSEQ_METADATA {
 	publishDir params.outdir, mode:'copy'
 	
 	input:
-		val(conditions)
 		val(samples)
+		val(conditions)
 		path(beds)
 		val(runid)
 	
