@@ -5,6 +5,7 @@ include { fromSamplesheet } from 'plugin/nf-validation'
 params.fasta = WorkflowMain.getGenomeAttribute(params, 'fasta')
 params.fasta_index = WorkflowMain.getGenomeAttribute(params, 'fasta_index')
 params.bwt2index = WorkflowMain.getGenomeAttribute(params, 'bowtie2')
+params.mask_bed = WorkflowMain.getGenomeAttribute(params, 'mask_bed')
 
 // Print pipeline info
 log.info """\
@@ -339,8 +340,8 @@ process GENERATE_GPSEQ_METADATA {
 	publishDir params.outdir, mode:'copy'
 	
 	input:
-		val(samples)
 		val(conditions)
+		val(samples)
 		path(beds)
 		val(runid)
 	
@@ -387,15 +388,24 @@ process CALCULATE_GPSEQ_SCORE {
 		path beds
 		path metadata
 		path chromsizes
+		path mask_bed
+		val site_bed
 		val binsizes
+		val normalization
+		val bed_outlier_tag
+		val score_outlier_tag
+		val site_domain
 	
 	output:
 		path 'gpseq_scores/*'
 	
 	script:
+		def sitebed_args = ""
+		sitebed_args = site_domain == "universal" ? "--site-bed ${site_bed}" : "" 
 		"""
-		gpseq-radical.R ${metadata} gpseq_scores -b ${binsizes} \\
-		-c ${chromsizes} --normalize-by 'chrom' --threads ${task.cpus}
+		gpseq-radical.R ${metadata} gpseq_scores --bin-tags ${binsizes} --bed-outlier-tag ${bed_outlier_tag}  \
+		--score-outlier-tag ${score_outlier_tag} --cinfo-path ${chromsizes} --normalize-by ${normalization} \
+		--site-domain ${site_domain} --mask-bed ${mask_bed} --chromosome-wide --threads ${task.cpus} ${sitebed_args}
 		"""
 }
 
@@ -493,9 +503,9 @@ workflow {
 	meta_ch = samplesheet.condition_ch
 				.join(bed_ch)
 				.combine(run_ch)
-				.multiMap { condition, sample, bed, runid -> 
-						condition: condition
+				.multiMap { sample, condition, bed, runid -> 
 						sample: sample
+						condition: condition
 						bed: bed
 						run: runid
 				}
@@ -510,8 +520,9 @@ workflow {
 	chromsize_ch = GET_CHROMSIZES(params.fasta_index) // Getting chromsize from .fai
 
 	// Calculating GPseq score
-	CALCULATE_GPSEQ_SCORE(meta_ch.bed.collect(), score_meta, chromsize_ch, params.binsizes)
-
-	// Plotting GPSeq score pizza plot and ideograms
-
+	CALCULATE_GPSEQ_SCORE(meta_ch.bed.collect(), score_meta, chromsize_ch, params.mask_bed,
+						  params.site_bed, params.binsizes, params.normalization, params.bed_outlier_tag, 
+						  params.score_outlier_tag, params.site_domain)
 }
+
+	

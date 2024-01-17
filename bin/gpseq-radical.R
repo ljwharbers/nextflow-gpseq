@@ -597,8 +597,7 @@ parser = argparser::add_argument(parser, arg="--cinfo-path",
     default=NULL)
 parser = argparser::add_argument(parser, arg="--ref-genome", help=paste0(
         "Used when --cinfo-path is not provided to query UCSC. ",
-        "If the provided reference genome is not found, reverts to 'hg38'."),
-    default="hg19")
+        "If the provided reference genome is not found, reverts to 'hg38'."))
 
 parser = argparser::add_argument(parser, arg="--bin-tags",
     help="Comma-separated bin tags. Use --more-help for more details.",
@@ -819,7 +818,8 @@ if ("universal" == args$site_domain) {
 
 # Retain chromosomes according to chromosome tag -------------------------------
 
-    if (exists("cinfo")) {
+    if (!is.null(args$chrom_tag)) {
+        if (exists("cinfo")) {        
         chrom_tag = unlist(strsplit(args$chrom_tag, ":"))
         chromosomes = paste0("chr", c(1:as.numeric(chrom_tag[1]),
             unlist(strsplit(chrom_tag[2], ","))))
@@ -832,6 +832,8 @@ if ("universal" == args$site_domain) {
         }
         cinfo[, chrom_base := NULL]
     }
+    }
+ 
 
 # Build bins -------------------------------------------------------------------
 
