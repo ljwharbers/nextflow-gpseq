@@ -619,7 +619,7 @@ parser = argparser::add_argument(parser, arg="--normalize-by", help=paste0(
 
 parser = argparser::add_argument(parser, arg="--site-domain",
     help="Site domain method. Use --more-help for more detail.",
-    default="separate")
+    default="universe")
 parser = argparser::add_argument(parser, arg="--site-bed", help=paste0(
         "Path to bed file with recognition site locations for the enzyme ",
         "in use. This is required when using '--site-domain universe'."),
@@ -707,11 +707,11 @@ chromosome-wise or library-wise manner, by using the '--normalize-by chr' or
 calculation, even if rescaling is skipped.
 
 The '--site-domain' option can be used to specify which recognition sites to
-consider when estimating centrality. The default 'separate' domain considers all
+consider when estimating centrality. The 'separate' domain considers all
 (non-outlier) sites with at least one mapped read in a condition. The 'union'
 domain considers all (non-outlier) sites with at least one mapped read in at
 least one condition. The 'intersection' domain retains only recognition sites
-with at least on mapped read in all conditions. The 'universe' domain considers
+with at least on mapped read in all conditions. The default 'universe' domain considers
 all known recognition site locations in the reference genome. When using
 '--site-domain universe', a bed file with known recognition site locations must
 be provided using the '--site-bed' option.

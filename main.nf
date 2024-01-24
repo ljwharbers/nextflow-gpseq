@@ -22,6 +22,47 @@ log.info """\
 		"""
 		.stripIndent()
 
+// Prepare SNPsplit reference genome if the experiment is from a chimeric mouse model
+process SNPSPLIT_PREPARE_GENOME {
+	label ""
+	tag "Preparing SNPsplit genome for ${reference}"
+	
+	container "https://depot.galaxyproject.org/singularity/snpsplit:0.6.0--hdfd78af_0"
+	
+	input:
+		path fasta
+		path vcf_file
+		val strain
+		
+	output:
+		path fasta
+		
+	script:
+		"""
+		SNPsplit_genome_preparation --reference_genome ${reference} \
+                            --vcf_file ${vcf_file} \
+                            --strain ${strain}
+		"""
+}
+
+// Index the SNPsplit reference genome using bowtie2-index
+process SNPSPLIT_INDEX_GENOME {
+	label ""
+	tag "Preparing SNPsplit genome for ${reference}"
+	
+	container "https://depot.galaxyproject.org/singularity/mulled-v2-ac74a7f02cebcfcc07d8e8d1d750af9c83b4d45a:a0ffedb52808e102887f6ce600d092675bf3528a-0"
+	
+	input:
+		path fasta
+		
+	output:
+		path bwt2index
+		
+	script:
+		"""
+		bowtie2-build ${reference} ${reference}
+		"""
+}
 
 // Get file with all cutsite locations for given reference genome and enzyme combination
 process GET_CUTSITES {
@@ -119,8 +160,8 @@ process ALIGN {
 	script:
 		"""
 		INDEX=`find -L ./ -name "*.rev.1.bt2" | sed "s/\\.rev.1.bt2\$//"`
-    [ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/\\.rev.1.bt2l\$//"`
-    [ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
+    	[ -z "\$INDEX" ] && INDEX=`find -L ./ -name "*.rev.1.bt2l" | sed "s/\\.rev.1.bt2l\$//"`
+    	[ -z "\$INDEX" ] && echo "Bowtie2 index files not found" 1>&2 && exit 1
 		
 		bowtie2 -x \$INDEX ${filtered} --very-sensitive -L 20 --score-min L,-0.6,-0.2 \\
 		--end-to-end --reorder -p ${task.cpus} 2> "${sample}_bowtie2.log" | \\
@@ -148,7 +189,25 @@ process FILTER_BAM {
 		"""
 }
 
-// SNPsplit if the experiment is from a 
+// SNPsplit if the experiment is from a
+process SNPSPLIT_SPLIT {
+	label ""
+	tag "Splitting bamfile on SNP positions of ${sample}"
+	
+	container "https://depot.galaxyproject.org/singularity/snpsplit:0.6.0--hdfd78af_0"
+	
+	input:
+		tuple val(sample), path(bam)
+		
+	output:
+		tuple val(sample), path("${sample}_genome1.filt.bam"), emit: filt_bam_1
+		tuple val(sample), path("${sample}_genome2.filt.bam"), emit: filt_bam_2
+		
+	script:
+		"""
+		SNPsplit --weird --no_sort --snp_file ${params.snp_file} ${bam}
+		"""
+}
 
 // Correct forward and reverse positions
 process CORRECT_POS {
@@ -389,7 +448,7 @@ process CALCULATE_GPSEQ_SCORE {
 		path metadata
 		path chromsizes
 		path mask_bed
-		val site_bed
+		path site_bed
 		val binsizes
 		val normalization
 		val bed_outlier_tag
@@ -401,7 +460,7 @@ process CALCULATE_GPSEQ_SCORE {
 	
 	script:
 		def sitebed_args = ""
-		sitebed_args = site_domain == "universal" ? "--site-bed ${site_bed}" : "" 
+		sitebed_args = site_domain == "universe" ? "--site-bed ${site_bed}" : "" 
 		"""
 		gpseq-radical.R ${metadata} gpseq_scores --bin-tags ${binsizes} --bed-outlier-tag ${bed_outlier_tag}  \
 		--score-outlier-tag ${score_outlier_tag} --cinfo-path ${chromsizes} --normalize-by ${normalization} \
@@ -521,7 +580,7 @@ workflow {
 
 	// Calculating GPseq score
 	CALCULATE_GPSEQ_SCORE(meta_ch.bed.collect(), score_meta, chromsize_ch, params.mask_bed,
-						  params.site_bed, params.binsizes, params.normalization, params.bed_outlier_tag, 
+						  cutsites_ch, params.binsizes, params.normalization, params.bed_outlier_tag, 
 						  params.score_outlier_tag, params.site_domain)
 }
 

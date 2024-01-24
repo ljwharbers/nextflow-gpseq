@@ -29,5 +29,10 @@ dt = data.table(exid = argv$runs,
                 libid = argv$samples,
                 fpath = argv$filepaths)
 
+# Sort based on condition
+dt[, time_suffix := gsub("([0-9])", "", cond)]
+dt[, time_prefix := as.numeric(gsub("([a-zA-Z:])", "", cond))]
+setorder(dt, -time_suffix, time_prefix)
+
 # Write output
-write.table(dt, argv$output, quote = F, row.names = F, col.names = T, sep = "\t")
+write.table(dt[, .(exid, cond, libid, fpath)], argv$output, quote = F, row.names = F, col.names = T, sep = "\t")
