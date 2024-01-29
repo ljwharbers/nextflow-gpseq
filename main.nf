@@ -94,6 +94,8 @@ process EXTRACT {
 
 	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
 	
+	publishDir "${params.outdir}/logs", mode: 'copy', pattern: "*.log"
+
 	input:
 		tuple val(sample), path(reads)
 		val pattern
@@ -122,6 +124,8 @@ process FILTER {
 
 	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
 	
+	publishDir "${params.outdir}/logs", mode: 'copy', pattern: "*.log"
+	
 	input:
 		tuple val(sample), val(barcode), path(hq_extracted)
 		val cutsite
@@ -147,6 +151,8 @@ process ALIGN {
 	tag "bowtie2 on ${sample}"
 	
 	container "https://depot.galaxyproject.org/singularity/mulled-v2-ac74a7f02cebcfcc07d8e8d1d750af9c83b4d45a:a0ffedb52808e102887f6ce600d092675bf3528a-0"
+	
+	publishDir "${params.outdir}/logs/", mode: 'copy', pattern: "*.log"
 	
 	input:
 		tuple val(sample), path(filtered)
@@ -281,7 +287,7 @@ process DEDUPLICATE {
 	label "process_medium"
 	tag "Deduplicating UMIs of ${sample}"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
 	
 	input:
 		tuple val(sample), path(umi_atcs)
@@ -301,7 +307,7 @@ process GENERATE_BED {
 	tag "Generating final bed file of ${sample}"
 	
 	// Publish
-	publishDir params.outdir, mode:'copy'
+	publishDir params.outdir, mode: 'copy'
 	
 	input: 
 		tuple val(sample), path(umi_dedup)
@@ -343,6 +349,7 @@ process COUNT_FILTERS {
 					path(dedup)
 	output:
 		path("${sample}_filter_counts.txt"), emit: fastq_counts
+		
 	script:
 		"""
 		touch ${sample}_filter_counts.txt
@@ -372,9 +379,9 @@ process GENERATE_SUMMARY_PLOTS {
 	label "process_low"
 	tag "Generating summary plots of all samples"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"	
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"	
 	
-	publishDir params.outdir, mode:'copy'
+	publishDir params.outdir, mode: 'copy'
 	
 	input:
 		path counts
@@ -394,9 +401,9 @@ process GENERATE_GPSEQ_METADATA {
 	label "process_low"
 	tag "Generating metadata for GPSeq score calculation"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
 	
-	publishDir params.outdir, mode:'copy'
+	publishDir params.outdir, mode: 'copy'
 	
 	input:
 		val(conditions)
@@ -439,9 +446,9 @@ process CALCULATE_GPSEQ_SCORE {
 	label "process_medium"
 	tag "Calculating GPSeq score"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
 	
-	publishDir params.outdir, mode:'copy'
+	publishDir params.outdir, mode: 'copy'
 	
 	input:
 		path beds
@@ -457,6 +464,7 @@ process CALCULATE_GPSEQ_SCORE {
 	
 	output:
 		path 'gpseq_scores/*'
+		path 'gpseq_scores/gpseq-radical.out.rds' , emit: score_rds
 	
 	script:
 		def sitebed_args = ""
@@ -465,6 +473,48 @@ process CALCULATE_GPSEQ_SCORE {
 		gpseq-radical.R ${metadata} gpseq_scores --bin-tags ${binsizes} --bed-outlier-tag ${bed_outlier_tag}  \
 		--score-outlier-tag ${score_outlier_tag} --cinfo-path ${chromsizes} --normalize-by ${normalization} \
 		--site-domain ${site_domain} --mask-bed ${mask_bed} --chromosome-wide --threads ${task.cpus} ${sitebed_args}
+		"""
+}
+
+// Plot Pizza plots
+process PLOT_PIZZA {
+	label "process_low"
+	tag "Plotting pizza plots"
+	
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
+	
+	publishDir "${params.outdir}/gpseq_scores", mode:  'copy'
+	
+	input:
+		path scores
+	
+	output:
+		path 'pizza_plot*.png'
+	
+	script:
+		"""
+		pizza_plot.R --input ${scores} --output \$PWD 
+		"""
+}
+
+// Plot ideogram plots
+process PLOT_IDEOGRAM {
+	label "process_low"
+	tag "Plotting ideogram plots"
+	
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
+	
+	publishDir "${params.outdir}/gpseq_scores", mode: 'copy'
+	
+	input:
+		path scores
+	
+	output:
+		path 'ideogram_plot*.png'
+	
+	script:
+		"""
+		ideogram_plot.R --input ${scores} --output \$PWD 
 		"""
 }
 
@@ -495,7 +545,7 @@ process MULTIQC {
 	
 	container "https://depot.galaxyproject.org/singularity/multiqc:1.15--pyhdfd78af_0"
 	
-	publishDir params.outdir, mode:'copy'
+	publishDir params.outdir, mode: 'copy'
 
 	input:
 		path '*'
@@ -579,9 +629,12 @@ workflow {
 	chromsize_ch = GET_CHROMSIZES(params.fasta_index) // Getting chromsize from .fai
 
 	// Calculating GPseq score
-	CALCULATE_GPSEQ_SCORE(meta_ch.bed.collect(), score_meta, chromsize_ch, params.mask_bed,
-						  cutsites_ch, params.binsizes, params.normalization, params.bed_outlier_tag, 
-						  params.score_outlier_tag, params.site_domain)
-}
-
+	gpseq_score = CALCULATE_GPSEQ_SCORE(meta_ch.bed.collect(), score_meta, chromsize_ch,
+																			params.mask_bed, cutsites_ch, params.binsizes,
+																			params.normalization, params.bed_outlier_tag,
+																			params.score_outlier_tag, params.site_domain)
 	
+	// Plotting
+	PLOT_PIZZA(gpseq_score.score_rds) // Plotting pizza plots
+	//PLOT_IDEOGRAM(gpseq_score.score_rds) // Plotting ideogram plots
+}
