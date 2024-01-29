@@ -2,7 +2,7 @@
 
 ## Author: Luuk Harbers
 ## Date: 2022-10-22
-## Script to process allelic counts
+## Script to make summary table and plots
 
 ## Load/install packages
 packages = c("data.table", "argparser", "ggplot2", "cowplot", "ggsci", "scales", "patchwork", "gtools")
