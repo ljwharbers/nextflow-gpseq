@@ -743,7 +743,7 @@ assert(args$normalize_by %in% c("chrom", "lib"),
     sprintf("Unrecognized 'normalize_by' value: '%s'", args$normalize_by))
 assert(args$site_domain %in% c("separate", "union", "intersection", "universe"),
     sprintf("Unrecognized 'site_domain' value: '%s'", args$site_domain))
-if ("universal" == args$site_domain) {
+if ("universe" == args$site_domain) {
     assert(!is.na(args$site_bed),
         "A 'site_bed' path must be specified when 'site_domain' is 'universe'.")
     assert(file.exists(args$site_bed),
