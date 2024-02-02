@@ -93,8 +93,10 @@ plot_list = lapply(binsizes, function(dt) {
                  geom_point(size = 0.5, alpha = 0.5) +
                  scale_color_viridis_c(option = "H", direction = 1) +
                  scale_y_reverse() +
-                 geom_vline(data = chr_bounds, aes(xintercept = max), linewidth = 0.25, colour = "grey", linetype = "dashed") +
-                 geom_text(data = chr_bounds, aes(x = mid, y = -Inf, label = chrom), size = 5, inherit.aes = F) +
+                 geom_vline(data = chr_bounds, aes(xintercept = max),
+                            linewidth = 0.5, colour = "grey", linetype = "dashed") +
+                 geom_text(data = chr_bounds, aes(x = mid, y = -Inf, label = chrom),
+                           size = 5, inherit.aes = F) +
                  coord_polar() +
                  labs(y = "GPSeq score", x = "", colour = "Log2 GPSeq Score") +
                  theme_void() + 
