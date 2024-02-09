@@ -147,7 +147,7 @@ process FILTER {
 
 // Align filtered fastq files to reference genome using bowtie2
 process ALIGN {
-	label "process_high"
+	label "process_highcpu"
 	tag "bowtie2 on ${sample}"
 	
 	container "https://depot.galaxyproject.org/singularity/mulled-v2-ac74a7f02cebcfcc07d8e8d1d750af9c83b4d45a:a0ffedb52808e102887f6ce600d092675bf3528a-0"
@@ -446,7 +446,7 @@ process CALCULATE_GPSEQ_SCORE {
 	label "process_medium"
 	tag "Calculating GPSeq score"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
+	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
 	
 	publishDir params.outdir, mode: 'copy'
 	
