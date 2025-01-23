@@ -230,7 +230,7 @@ process CORRECT_POS {
 	
 	script:
 		"""
-		export TMPDIR=${workDir}
+		export TMPDIR=\$PWD
 		sambamba view ${bam} -h -f bam -F "reverse_strand" | \\
 		convert2bed --input=bam - | \\
 		cut -f 1-4 | sed 's/~/\t/g' | cut -f 1,3,7,16 | gzip > ${sample}.forward.bed.gz
