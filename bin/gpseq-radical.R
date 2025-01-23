@@ -377,6 +377,7 @@ rescale_by_chr = function(estmd, specs) {
 }
 
 export_rescaled_centrality = function(rscld, odir, format = "tsv.gz") {
+    rscld[, log2_score := log2(score)]
     export_output(rscld, odir, format, "rescaled", rm_tag = TRUE)
 }
 
