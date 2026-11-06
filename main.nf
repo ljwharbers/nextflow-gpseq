@@ -70,7 +70,7 @@ process GET_CUTSITES {
 	tag "Getting cutsite locations for ${enzyme} in ${fasta.Name}"
 	
 	
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/60/60add241b138cc582ef946f154128c070cc82d2b36d615cded0baf273ee919f5/data"
 	
 	input:
 		path fasta
@@ -92,7 +92,7 @@ process EXTRACT {
 	label "process_low"
 	tag "fbarber extract on ${sample}"
 
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/60/60add241b138cc582ef946f154128c070cc82d2b36d615cded0baf273ee919f5/data"
 	
 	publishDir "${params.outdir}/logs", mode: 'copy', pattern: "*.log"
 
@@ -122,7 +122,7 @@ process FILTER {
 	label "process_low"
 	tag "fbarber filter on ${sample}"
 
-	container "library://ljwharbers/gpseq/fastx-barber:0.0.4"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/60/60add241b138cc582ef946f154128c070cc82d2b36d615cded0baf273ee919f5/data"
 	
 	publishDir "${params.outdir}/logs", mode: 'copy', pattern: "*.log"
 	
@@ -246,7 +246,7 @@ process GROUP_UMIS {
 	label "process_single"
 	tag "Grouping UMIs of ${sample}"
 	
-	container "library://ljwharbers/gpseq/gpseq_pyenv:0.0.1"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/60/60add241b138cc582ef946f154128c070cc82d2b36d615cded0baf273ee919f5/data"
 	
 	input:
 		tuple val(sample), path(forward_bed), path(reverse_bed)
@@ -266,7 +266,7 @@ process ASSIGN_UMIS {
 	label "process_low"
 	tag "Assigning UMIs to cutsite of ${sample}"
 	
-	container "library://ljwharbers/gpseq/gpseq_pyenv:0.0.1"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/60/60add241b138cc582ef946f154128c070cc82d2b36d615cded0baf273ee919f5/data"
 	
 	input:
 		tuple val(sample), path(umi_clean)
@@ -287,7 +287,7 @@ process DEDUPLICATE {
 	label "process_medium"
 	tag "Deduplicating UMIs of ${sample}"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/62/62a06a7681ee85aa08e5ce99389d1780e6d0e10c930a935509f6e5ff685b9d89/data"
 	
 	input:
 		tuple val(sample), path(umi_atcs)
@@ -379,7 +379,7 @@ process GENERATE_SUMMARY_PLOTS {
 	label "process_low"
 	tag "Generating summary plots of all samples"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"	
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/62/62a06a7681ee85aa08e5ce99389d1780e6d0e10c930a935509f6e5ff685b9d89/data"	
 	
 	publishDir params.outdir, mode: 'copy'
 	
@@ -401,7 +401,7 @@ process GENERATE_GPSEQ_METADATA {
 	label "process_low"
 	tag "Generating metadata for GPSeq score calculation"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/62/62a06a7681ee85aa08e5ce99389d1780e6d0e10c930a935509f6e5ff685b9d89/data"
 	
 	publishDir params.outdir, mode: 'copy'
 	
@@ -446,7 +446,7 @@ process CALCULATE_GPSEQ_SCORE {
 	label "process_medium"
 	tag "Calculating GPSeq score"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.3"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/62/62a06a7681ee85aa08e5ce99389d1780e6d0e10c930a935509f6e5ff685b9d89/data"
 	
 	publishDir params.outdir, mode: 'copy'
 	
@@ -481,7 +481,7 @@ process PLOT_PIZZA {
 	label "process_low"
 	tag "Plotting pizza plots"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/62/62a06a7681ee85aa08e5ce99389d1780e6d0e10c930a935509f6e5ff685b9d89/data"
 	
 	publishDir "${params.outdir}/gpseq_scores", mode:  'copy'
 	
@@ -502,7 +502,7 @@ process PLOT_IDEOGRAM {
 	label "process_low"
 	tag "Plotting ideogram plots"
 	
-	container "library://ljwharbers/gpseq/gpseq_renv:0.0.4"
+	container "https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/62/62a06a7681ee85aa08e5ce99389d1780e6d0e10c930a935509f6e5ff685b9d89/data"
 	
 	publishDir "${params.outdir}/gpseq_scores", mode: 'copy'
 	
