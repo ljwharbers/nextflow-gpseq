@@ -1,0 +1,2 @@
+{"packages":{"type":"CONDA","entries":["r-base=4.4","r-argparser","r-data.table","r-logging","r-outliers","r-pbapply","bioconductor-rtracklayer=1.66","r-ggplot2","r-cowplot","r-ggsci","r-scales","r-patchwork","r-gtools","r-dplyr","r-paletteer","r-r.utils"],"channels":["conda-forge","bioconda"]},
+ "format":"sif","containerPlatform":"linux/amd64","freeze":true}

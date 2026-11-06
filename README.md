@@ -1,11 +1,13 @@
 ## Nextflow pipeline for processing of GPSeq data
 
 ### Requirements
-To be able to run this pipeline you need nextflow (version 23.10 or higher) and singularity (tested on version 3.8.6) installed. This does not work on Mac.
+To be able to run this pipeline you need nextflow (version 23.10 or higher) and apptainer (or singularity) installed. This does not work on Mac.
+
+All containers are pulled over HTTPS (Seqera community containers and the Galaxy depot), so no `library://` remote or Sylabs account is needed. The pipeline's own images were previously hosted on the Sylabs Cloud Library, which was shut down in October 2026; they have been rebuilt from conda/PyPI specifications (see `assets/containers/`).
 
 The easiest way to install these tools is with conda package manager.  
 For example using the following lines (assuming you have conda installed):  
-`conda create -n nextflow -c conda-forge -c bioconda nextflow=23.10.0 singularity=3.8*`
+`conda create -n nextflow -c conda-forge -c bioconda nextflow=23.10.0 apptainer`
 
 If you don't have conda installed yet you can install and initialize it in the following way:  
 ```
